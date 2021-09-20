@@ -1,7 +1,11 @@
 package main
 
 import (
+	"context"
+	"fmt"
 	"net/http"
+
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // MapHandler will return an http.HandlerFunc (which also
@@ -10,14 +14,22 @@ import (
 // that each key in the map points to, in string format).
 // If the path is not provided in the map, then the fallback
 // http.Handler will be called instead.
-func MapHandler(pathsToUrls map[string]string, fallback http.Handler) http.HandlerFunc {
+func MapHandler(client *mongo.Client, c *context.Context, fallback http.Handler) http.HandlerFunc {
+	paths := fetchDB(client, c)
 	return func(w http.ResponseWriter, r *http.Request) {
 		path := r.URL.Path
-		if dest, ok := pathsToUrls[path]; ok {
-			http.Redirect(w, r, dest, http.StatusFound)
+		if path == "/" {
+			fallback.ServeHTTP(w, r)
 			return
 		}
-		fallback.ServeHTTP(w, r)
+		fmt.Println("Checking...")
+		for _, a := range paths {
+			if ("/" + a.Link) == path {
+				http.Redirect(w, r, a.Destination, http.StatusFound)
+				return
+			}
+		}
+		http.ServeFile(w, r, "./404.html")
 	}
 }
 

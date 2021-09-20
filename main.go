@@ -31,25 +31,14 @@ func main() {
 	}
 	defer client.Disconnect(ctx)
 
-	collection := client.Database("urlshortener").Collection("links")
-	data, derr := collection.Find(ctx, bson.D{})
-	if derr != nil {
-		panic(derr)
-	}
-	defer data.Close(ctx)
-	var results []Pair
-	if err = data.All(ctx, &results); err != nil {
-		panic(err)
-	}
-	fmt.Println(results)
 	// Serving
 
 	mux := defaultMux()
 
-	pathsToUrls := map[string]string{
-		"/go": "https://google.com",
-	}
-	mapHandler := MapHandler(pathsToUrls, mux)
+	// pathsToUrls := map[string]string{
+	// 	"/go": "https://google.com",
+	// }
+	mapHandler := MapHandler(client, &ctx, mux)
 
 	fmt.Println("Starting the server on :8080")
 	http.ListenAndServe(":8080", mapHandler)
@@ -57,10 +46,26 @@ func main() {
 
 func defaultMux() *http.ServeMux {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", hello)
+	mux.HandleFunc("/", index)
 	return mux
 }
 
-func hello(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "./404.html")
+func index(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "./index.html")
+}
+
+func fetchDB(client *mongo.Client, c *context.Context) []Pair {
+	ctx := *c
+	collection := client.Database("urlshortener").Collection("links")
+	data, derr := collection.Find(ctx, bson.D{})
+	if derr != nil {
+		panic(derr)
+	}
+	defer data.Close(ctx)
+	var results []Pair
+	if err := data.All(ctx, &results); err != nil {
+		panic(err)
+	}
+	fmt.Println(results)
+	return results
 }

@@ -19,7 +19,6 @@ in a new file called **.env** in root.
 
 ### DB Setup
 Create a cluster on MongoDB Atlas and set up database as follows:
-├──
 ```
 links (collection)
 ├──link

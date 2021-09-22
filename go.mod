@@ -7,6 +7,7 @@ require (
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible // indirect
 	github.com/golang/snappy v0.0.1 // indirect
+	github.com/joho/godotenv v1.3.0 // indirect
 	github.com/klauspost/compress v1.9.5 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect

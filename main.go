@@ -9,10 +9,12 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
 	valid "github.com/asaskevich/govalidator"
+	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -73,8 +75,9 @@ type Pair struct {
 
 func main() {
 	// Mongo
+	// client, err := mongo.NewClient(options.Client().ApplyURI(getMongoURI()))
+	client, err := mongo.NewClient(options.Client().ApplyURI(goDotEnvVariable("MONGO_URI")))
 
-	client, err := mongo.NewClient(options.Client().ApplyURI(getMongoURI()))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -95,7 +98,7 @@ func main() {
 	mux.HandleFunc("/", indexHandler)
 	mux.Handle("/bot", wHookHandler)
 	mux.Handle("/go/", urlHandler)
-	http.ListenAndServe(":8080", mux)
+	http.ListenAndServe(":"+os.Getenv("PORT"), mux)
 }
 
 // ServeHTTP allows your type to satisfy the http.Handler interface.
@@ -279,7 +282,7 @@ func sendMessage(chatID int64, m string) error {
 		return err
 	}
 
-	res, err := http.Post("https://api.telegram.org/bot"+getBotToken()+"/sendMessage", "application/json", bytes.NewBuffer(reqBytes))
+	res, err := http.Post("https://api.telegram.org/bot"+goDotEnvVariable("BOT_TOKEN")+"/sendMessage", "application/json", bytes.NewBuffer(reqBytes))
 	if err != nil {
 		return err
 	}
@@ -301,7 +304,7 @@ func startMessage(chatID int64) error {
 		return err
 	}
 
-	res, err := http.Post("https://api.telegram.org/bot"+getBotToken()+"/sendMessage", "application/json", bytes.NewBuffer(reqBytes))
+	res, err := http.Post("https://api.telegram.org/bot"+goDotEnvVariable("BOT_TOKEN")+"/sendMessage", "application/json", bytes.NewBuffer(reqBytes))
 	if err != nil {
 		return err
 	}
@@ -337,7 +340,7 @@ func userNotAuth(chatID int64) error {
 		return err
 	}
 
-	res, err := http.Post("https://api.telegram.org/bot"+getBotToken()+"/sendMessage", "application/json", bytes.NewBuffer(reqBytes))
+	res, err := http.Post("https://api.telegram.org/bot"+goDotEnvVariable("BOT_TOKEN")+"/sendMessage", "application/json", bytes.NewBuffer(reqBytes))
 	if err != nil {
 		return err
 	}
@@ -376,4 +379,16 @@ func replaceHTTP(l string) string {
 	// 	return strings.Replace(l, "http", "https", 1)
 	// }
 	return "https://" + l
+}
+
+func goDotEnvVariable(key string) string {
+
+	// load .env file
+	err := godotenv.Load(".env")
+
+	if err != nil {
+		log.Fatalf("Error loading .env file")
+	}
+
+	return os.Getenv(key)
 }

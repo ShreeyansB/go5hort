@@ -1,5 +1,5 @@
-# go5short
-go5short is a Telegram Bot written in Go for Shortening URLs.
+# go5hort
+go5hort is a Telegram Bot written in Go for Shortening URLs.
 
 ## Commands
 ```

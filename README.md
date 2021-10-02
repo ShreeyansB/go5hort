@@ -36,5 +36,5 @@ in **.env** in root.
 
 Customize **index.html** and **404.html** as per your liking.
 
-> Also use **go mod vendor** to download libraries in root folder for deployment. I used Heroku for deployment.
+> Also use **go mod vendor** to download libraries in root folder for deployment. I used Heroku for deployment. Dont forget to set the environment variables for your preffered method of deployment. Eg: Set Config Vars in Heroku Dashboard.
 

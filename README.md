@@ -1,5 +1,5 @@
-# go5short
-go5short is a Telegram Bot written in Go for Shortening URLs.
+# go5hort
+go5hort is a Telegram Bot written in Go for Shortening URLs.
 
 ## Commands
 ```
@@ -19,7 +19,6 @@ in a new file called **.env** in root.
 
 ### DB Setup
 Create a cluster on MongoDB Atlas and set up database as follows:
-├──
 ```
 links (collection)
 ├──link
@@ -37,5 +36,5 @@ in **.env** in root.
 
 Customize **index.html** and **404.html** as per your liking.
 
-> Also use **go mod vendor** to download libraries in root folder for deployment. I used Heroku for deployment.
+> Also use **go mod vendor** to download libraries in root folder for deployment. I used Heroku for deployment. Dont forget to set the environment variables for your preffered method of deployment. Eg: Set Config Vars in Heroku Dashboard.
 
